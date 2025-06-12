@@ -1,0 +1,134 @@
+body {
+    font-family: sans-serif;
+    margin: 20px;
+    background-color: #f4f4f4;
+    color: #333;
+}
+
+header, main, footer {
+    background-color: #fff;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+h1, h2 {
+    color: #0056b3;
+}
+
+button {
+    padding: 10px 15px;
+    margin: 5px;
+    border: none;
+    border-radius: 5px;
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+.video-player-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#videoPlayer {
+    width: 100%;
+    max-width: 800px;
+    margin-bottom: 15px;
+    background-color: #000; /* Placeholder for video area */
+}
+
+.video-info { /* New style for video path display */
+    margin-top: 10px;
+    margin-bottom: 20px;
+    padding: 10px;
+    background-color: #e9f5ff;
+    border: 1px solid #cce7ff;
+    border-radius: 5px;
+    font-size: 0.95em;
+    color: #333;
+    width: 100%;
+    max-width: 800px;
+    box-sizing: border-box; /* Include padding in width */
+    text-align: center; /* Center the text */
+}
+
+.video-loader-form input[type="text"] {
+    width: calc(100% - 22px); /* Adjust for padding and border */
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+    margin-bottom: 10px; /* Space between input and button */
+    box-sizing: border-box; /* Ensures padding is included in width */
+}
+
+.video-controls {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.video-controls button span {
+    font-weight: bold;
+    color: #d1d1d1; /* For readability on button */
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.form-group input[type="text"],
+.form-group input[type="number"],
+.form-group select,
+.form-group textarea {
+    width: calc(100% - 22px); /* Adjust for padding and border */
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+input[type="range"] {
+    width: 100%;
+}
+
+#eventTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+#eventTable th, #eventTable td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+#eventTable th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+}
+
+#eventTable tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+#eventTable button {
+    padding: 5px 10px;
+    font-size: 0.8rem;
+    margin-right: 5px; /* Spacing for multiple buttons */
+}

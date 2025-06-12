@@ -1,0 +1,135 @@
+[
+    {
+      "id": "smell",
+      "name": "Smell",
+      "description": "Information related to olfactory sensations.",
+      "attributes": [
+        {
+          "name": "type",
+          "label": "Smell Type",
+          "type": "text",
+          "required": true,
+          "placeholder": "e.g., Floral, Pine, Citrus"
+        },
+        {
+          "name": "intensity",
+          "label": "Intensity",
+          "type": "range",
+          "min": 0.0,
+          "max": 1.0,
+          "step": 0.1,
+          "default": 0.5
+        }
+      ]
+    },
+    {
+      "id": "pleasure",
+      "name": "Pleasure",
+      "description": "Subjective pleasurable sensations.",
+      "attributes": [
+        {
+          "name": "type",
+          "label": "Pleasure Type",
+          "type": "select",
+          "required": true,
+          "options": ["Euphoria", "Relaxation", "Excitement", "Comfort"]
+        },
+        {
+          "name": "intensity",
+          "label": "Intensity",
+          "type": "number",
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "default": 50
+        },
+        {
+          "name": "description",
+          "label": "Description (Optional)",
+          "type": "textarea",
+          "required": false
+        }
+      ]
+    },
+    {
+      "id": "temperature",
+      "name": "Temperature",
+      "description": "Thermal sensations.",
+      "attributes": [
+        {
+          "name": "value",
+          "label": "Temperature Value",
+          "type": "number",
+          "required": true,
+          "placeholder": "e.g., 25.5"
+        },
+        {
+          "name": "unit",
+          "label": "Unit",
+          "type": "select",
+          "required": true,
+          "options": ["C", "F", "K"]
+        },
+        {
+          "name": "rate",
+          "label": "Change Rate (Optional)",
+          "type": "number",
+          "required": false,
+          "placeholder": "e.g., 2.0 (deg/sec)"
+        }
+      ]
+    },
+    {
+      "id": "touch",
+      "name": "Touch",
+      "description": "Tactile sensations.",
+      "attributes": [
+        {
+          "name": "location",
+          "label": "Location",
+          "type": "text",
+          "required": true,
+          "placeholder": "e.g., Hand, Back, Face"
+        },
+        {
+          "name": "type",
+          "label": "Touch Type",
+          "type": "select",
+          "required": true,
+          "options": ["Vibration", "Pressure", "Texture", "Impact"]
+        },
+        {
+          "name": "intensity",
+          "label": "Intensity",
+          "type": "range",
+          "min": 0.0,
+          "max": 1.0,
+          "step": 0.05,
+          "default": 0.5
+        }
+      ]
+    },
+    {
+      "id": "taste",
+      "name": "Taste",
+      "description": "Gustatory sensations.",
+      "attributes": [
+        {
+          "name": "type",
+          "label": "Taste Type",
+          "type": "select",
+          "required": true,
+          "options": ["Sweet", "Sour", "Salty", "Bitter", "Umami"]
+        },
+        {
+          "name": "intensity",
+          "label": "Intensity",
+          "type": "range",
+          "min": 0.0,
+          "max": 1.0,
+          "step": 0.1,
+          "default": 0.5
+        }
+      ]
+    }
+  ]

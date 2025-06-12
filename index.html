@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>.TEJ Editor</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>.TEJ Editor</h1>
+        <!-- Existing .tej upload button, exclusively for .tej files -->
+        <input type="file" id="uploadTejFile" accept=".tej" style="display: none;">
+        <button id="uploadTejButton">Upload .tej File</button>
+
+        <!-- NEW: Form to load video from URL -->
+        <div class="video-loader-form">
+            <h3>Load Video Source from URL</h3>
+            <input type="text" id="videoUrlInput" placeholder="Enter video URL (e.g., .mp4, .webm)">
+            <button id="loadVideoUrlButton">Load Video from URL</button>
+        </div>
+        <!-- END NEW -->
+    </header>
+
+    <main>
+        <section class="video-player-section">
+            <video id="videoPlayer" controls></video>
+            <div id="videoSourceDisplay" class="video-info">
+                <span style="font-weight: bold;">Current Video: </span>
+                <span id="currentVideoPath">No video loaded.</span>
+                <span id="videoLoadMessage" style="color: grey; font-size: 0.9em; margin-left: 10px;"></span>
+            </div>
+            <div class="video-controls">
+                <button id="freezeFromTime">Freeze FROM TIME <span id="currentTimeFrom">00:00.000</span></button>
+                <button id="freezeToTime">Freeze TO TIME <span id="currentTimeTo">00:00.000</span></button>
+            </div>
+        </section>
+
+        <section id="eventEntryFormContainer" style="display: none;">
+            <h2>Add New Sensory Event</h2>
+            <form id="eventForm">
+                <div class="form-group">
+                    <label for="channelSelect">Channel:</label>
+                    <select id="channelSelect" required>
+                        <option value="">-- Select a Channel --</option>
+                        <!-- Options will be loaded dynamically from channels.json -->
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="fromTimeInput">From Time (ms):</label>
+                    <input type="number" id="fromTimeInput" readonly required>
+                </div>
+                <div class="form-group">
+                    <label for="toTimeInput">To Time (ms):</label>
+                    <input type="number" id="toTimeInput" readonly required>
+                </div>
+
+                <div id="dynamicAttributes" class="form-group">
+                    <!-- Dynamic fields will be loaded here based on channel selection -->
+                </div>
+
+                <button type="submit">Add Event</button>
+            </form>
+        </section>
+
+        <section class="data-table-section">
+            <h2>Saved Sensory Events</h2>
+            <table id="eventTable">
+                <thead>
+                    <tr>
+                        <th>Channel</th>
+                        <th>From (ms)</th>
+                        <th>To (ms)</th>
+                        <th>Attributes</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Saved events will be displayed here -->
+                </tbody>
+            </table>
+        </section>
+    </main>
+
+    <footer>
+        <button id="exportTej">Export .tej File</button>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
