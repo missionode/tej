@@ -9,17 +9,14 @@
 <body>
     <header>
         <h1>.TEJ Editor</h1>
-        <!-- Existing .tej upload button, exclusively for .tej files -->
         <input type="file" id="uploadTejFile" accept=".tej" style="display: none;">
         <button id="uploadTejButton">Upload .tej File</button>
 
-        <!-- NEW: Form to load video from URL -->
         <div class="video-loader-form">
             <h3>Load Video Source from URL</h3>
             <input type="text" id="videoUrlInput" placeholder="Enter video URL (e.g., .mp4, .webm)">
             <button id="loadVideoUrlButton">Load Video from URL</button>
         </div>
-        <!-- END NEW -->
     </header>
 
     <main>
@@ -31,6 +28,7 @@
                 <span id="videoLoadMessage" style="color: grey; font-size: 0.9em; margin-left: 10px;"></span>
             </div>
             <div class="video-controls">
+                <button id="fullscreenButton">Toggle Fullscreen</button> <!-- NEW Fullscreen Button -->
                 <button id="freezeFromTime">Freeze FROM TIME <span id="currentTimeFrom">00:00.000</span></button>
                 <button id="freezeToTime">Freeze TO TIME <span id="currentTimeTo">00:00.000</span></button>
             </div>

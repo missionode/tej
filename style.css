@@ -1,134 +1,440 @@
+/* Custom Properties for a Futuristic Theme */
+:root {
+    --color-bg-dark: #1a1a2e; /* Deep dark background */
+    --color-bg-medium: #22223b; /* Slightly lighter dark for cards/sections */
+    --color-accent-blue: #00bcd4; /* Electric blue */
+    --color-accent-purple: #c200c9; /* Vibrant purple */
+    --color-text-light: #e0e0e0; /* Light grey for primary text */
+    --color-text-muted: #a0a0a0; /* Muted grey for secondary text */
+    --color-border: rgba(255, 255, 255, 0.1); /* Subtle white border */
+    --color-error: #ff4a4a; /* Red for errors */
+    --shadow-light: 0 0 10px rgba(0, 188, 212, 0.3); /* Subtle blue glow */
+    --shadow-accent: 0 0 20px rgba(0, 188, 212, 0.6), 0 0 30px rgba(194, 0, 201, 0.4); /* Stronger mixed glow */
+    --border-radius-main: 12px;
+    --border-radius-small: 8px;
+    --transition-speed: 0.3s ease-in-out;
+}
+
+/* Base Styles */
 body {
-    font-family: sans-serif;
-    margin: 20px;
-    background-color: #f4f4f4;
-    color: #333;
+    font-family: 'Inter', sans-serif; /* Assuming Inter font is available or fallback */
+    margin: 0;
+    padding: 0;
+    background: var(--color-bg-dark);
+    color: var(--color-text-light);
+    line-height: 1.6;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
 }
 
+/* Global Container Styles */
 header, main, footer {
-    background-color: #fff;
+    background-color: var(--color-bg-medium);
     padding: 20px;
+    margin: 20px auto; /* Center sections */
+    border-radius: var(--border-radius-main);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3), var(--shadow-light); /* Added subtle glow */
+    max-width: 90%; /* Responsive width */
+    width: 100%;
+    box-sizing: border-box;
+}
+
+main {
+    flex-grow: 1; /* Make main content area fill available space */
+    display: flex;
+    flex-direction: column;
+    gap: 20px; /* Space between sections */
+}
+
+/* Headings */
+h1, h2, h3 {
+    color: var(--color-accent-blue);
+    text-align: center;
     margin-bottom: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    text-shadow: 0 0 5px rgba(0, 188, 212, 0.4); /* Subtle text glow */
 }
 
-h1, h2 {
-    color: #0056b3;
-}
-
+/* Buttons */
 button {
-    padding: 10px 15px;
-    margin: 5px;
+    padding: 12px 25px;
+    margin: 8px;
     border: none;
-    border-radius: 5px;
-    background-color: #007bff;
+    border-radius: var(--border-radius-small);
+    background: linear-gradient(45deg, var(--color-accent-blue), var(--color-accent-purple));
     color: white;
+    font-size: 1.1rem;
+    font-weight: bold;
     cursor: pointer;
-    font-size: 1rem;
+    transition: all var(--transition-speed);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Button depth */
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+}
+
+button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+    transform: translateX(-100%);
+    transition: transform var(--transition-speed);
+    z-index: -1;
+}
+
+button:hover::before {
+    transform: translateX(100%);
 }
 
 button:hover {
-    background-color: #0056b3;
+    box-shadow: var(--shadow-accent); /* Enhanced glow on hover */
+    transform: translateY(-2px); /* Slight lift effect */
 }
 
+button:active {
+    transform: translateY(0);
+    box-shadow: var(--shadow-light);
+}
+
+/* Header Specifics */
+header {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 2.2rem;
+    flex-grow: 1;
+    text-align: left;
+}
+
+header .video-loader-form {
+    flex-basis: 100%; /* Take full width on smaller screens */
+    margin-top: 15px;
+}
+
+/* Video Player Section */
 .video-player-section {
     display: flex;
     flex-direction: column;
     align-items: center;
+    padding: 20px;
+    background-color: var(--color-bg-medium);
+    border-radius: var(--border-radius-main);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3), var(--shadow-light);
 }
 
 #videoPlayer {
-    width: 100%;
-    max-width: 800px;
+    width: 100%; /* Allows it to take full width of its container */
+    /* Removed max-width: 800px; */
     margin-bottom: 15px;
-    background-color: #000; /* Placeholder for video area */
+    background-color: #000;
+    border-radius: var(--border-radius-small);
+    border: 2px solid var(--color-accent-blue);
+    box-shadow: 0 0 15px rgba(0, 188, 212, 0.5); /* Player glow */
 }
 
-.video-info { /* New style for video path display */
-    margin-top: 10px;
-    margin-bottom: 20px;
-    padding: 10px;
-    background-color: #e9f5ff;
-    border: 1px solid #cce7ff;
-    border-radius: 5px;
+.video-info {
+    margin-top: 15px;
+    margin-bottom: 25px;
+    padding: 12px;
+    background-color: rgba(0, 188, 212, 0.1); /* Semi-transparent accent */
+    border: 1px solid var(--color-accent-blue);
+    border-radius: var(--border-radius-small);
     font-size: 0.95em;
-    color: #333;
+    color: var(--color-text-light);
     width: 100%;
-    max-width: 800px;
-    box-sizing: border-box; /* Include padding in width */
-    text-align: center; /* Center the text */
+    max-width: 800px; /* Keep info bar at a reasonable width */
+    box-sizing: border-box;
+    text-align: center;
+    display: flex;
+    flex-direction: column; /* Stack text spans */
+    gap: 5px;
+}
+
+#currentVideoPath {
+    font-weight: bold;
+    color: var(--color-text-light);
+    word-break: break-all; /* Break long URLs */
+}
+#videoLoadMessage {
+    color: var(--color-text-muted);
+    font-size: 0.85em;
+}
+
+
+.video-loader-form {
+    background-color: var(--color-bg-dark); /* Slightly darker background for this form */
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-main);
+    padding: 20px;
+    margin-top: 20px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.video-loader-form h3 {
+    margin-bottom: 15px;
+    color: var(--color-accent-purple);
+    font-size: 1.3rem;
 }
 
 .video-loader-form input[type="text"] {
-    width: calc(100% - 22px); /* Adjust for padding and border */
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    width: calc(100% - 40px); /* Adjust for padding */
+    padding: 12px;
+    margin-bottom: 15px;
+    border: 1px solid var(--color-accent-blue);
+    border-radius: var(--border-radius-small);
+    background-color: #1a1a2e; /* Darker input background */
+    color: var(--color-text-light);
     font-size: 1rem;
-    margin-bottom: 10px; /* Space between input and button */
-    box-sizing: border-box; /* Ensures padding is included in width */
+    box-sizing: border-box; /* Include padding in width */
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.4);
+    transition: border-color var(--transition-speed);
+}
+
+.video-loader-form input[type="text"]:focus {
+    outline: none;
+    border-color: var(--color-accent-purple);
+    box-shadow: 0 0 8px rgba(194, 0, 201, 0.5);
 }
 
 .video-controls {
     display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
+    flex-wrap: wrap; /* Allow buttons to wrap on small screens */
+    justify-content: center;
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.video-controls button {
+    background: linear-gradient(90deg, var(--color-accent-blue), var(--color-accent-purple));
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+.video-controls button:hover {
+    box-shadow: var(--shadow-accent);
 }
 
 .video-controls button span {
-    font-weight: bold;
-    color: #d1d1d1; /* For readability on button */
+    color: var(--color-text-light); /* Ensure time display is readable */
+    font-weight: normal; /* Less bold for time */
+    margin-left: 8px; /* Space between text and time */
+}
+
+
+/* Event Entry Form Section */
+#eventEntryFormContainer {
+    background-color: var(--color-bg-medium);
+    padding: 25px;
+    border-radius: var(--border-radius-main);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3), var(--shadow-light);
 }
 
 .form-group {
-    margin-bottom: 15px;
+    margin-bottom: 20px;
 }
 
 .form-group label {
     display: block;
-    margin-bottom: 5px;
+    margin-bottom: 8px;
     font-weight: bold;
+    color: var(--color-text-light);
+    font-size: 1.05rem;
 }
 
 .form-group input[type="text"],
 .form-group input[type="number"],
 .form-group select,
 .form-group textarea {
-    width: calc(100% - 22px); /* Adjust for padding and border */
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-small);
+    background-color: #1a1a2e; /* Dark input background */
+    color: var(--color-text-light);
     font-size: 1rem;
+    box-sizing: border-box; /* Include padding in width */
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.4);
+    transition: border-color var(--transition-speed), box-shadow var(--transition-speed);
+}
+
+.form-group input[type="text"]:focus,
+.form-group input[type="number"]:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--color-accent-purple);
+    box-shadow: 0 0 8px rgba(194, 0, 201, 0.5);
 }
 
 input[type="range"] {
-    width: 100%;
+    -webkit-appearance: none; /* Remove default styling */
+    appearance: none;
+    height: 8px;
+    background: var(--color-border);
+    outline: none;
+    opacity: 0.7;
+    transition: opacity .2s;
+    border-radius: 4px;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--color-accent-blue);
+    cursor: pointer;
+    box-shadow: 0 0 5px rgba(0, 188, 212, 0.7);
+    transition: background var(--transition-speed), box-shadow var(--transition-speed);
+}
+
+input[type="range"]::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--color-accent-blue);
+    cursor: pointer;
+    box-shadow: 0 0 5px rgba(0, 188, 212, 0.7);
+    transition: background var(--transition-speed), box-shadow var(--transition-speed);
+}
+
+input[type="range"]:hover::-webkit-slider-thumb,
+input[type="range"]:active::-webkit-slider-thumb {
+    background: var(--color-accent-purple);
+    box-shadow: 0 0 10px rgba(194, 0, 201, 0.8);
+}
+
+input[type="range"]:hover::-moz-range-thumb,
+input[type="range"]:active::-moz-range-thumb {
+    background: var(--color-accent-purple);
+    box-shadow: 0 0 10px rgba(194, 0, 201, 0.8);
+}
+
+
+/* Data Table Section */
+.data-table-section {
+    background-color: var(--color-bg-medium);
+    padding: 25px;
+    border-radius: var(--border-radius-main);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3), var(--shadow-light);
+    overflow-x: auto; /* Enable horizontal scrolling for small screens */
 }
 
 #eventTable {
     width: 100%;
     border-collapse: collapse;
     margin-top: 20px;
+    min-width: 600px; /* Ensure table doesn't get too narrow */
 }
 
 #eventTable th, #eventTable td {
-    border: 1px solid #ddd;
-    padding: 8px;
+    border: 1px solid var(--color-border);
+    padding: 12px;
     text-align: left;
+    font-size: 0.95rem;
 }
 
 #eventTable th {
-    background-color: #f2f2f2;
+    background-color: var(--color-bg-dark);
+    color: var(--color-accent-blue);
     font-weight: bold;
+    position: sticky;
+    top: 0; /* Sticky header for scrolling table */
+    z-index: 2;
 }
 
-#eventTable tr:nth-child(even) {
-    background-color: #f9f9f9;
+#eventTable tbody tr {
+    background-color: var(--color-bg-medium);
+    transition: background-color var(--transition-speed);
 }
 
-#eventTable button {
-    padding: 5px 10px;
-    font-size: 0.8rem;
-    margin-right: 5px; /* Spacing for multiple buttons */
+#eventTable tbody tr:nth-child(even) {
+    background-color: rgba(34, 34, 59, 0.8); /* Slightly different shade for even rows */
+}
+
+#eventTable tbody tr:hover {
+    background-color: rgba(0, 188, 212, 0.08); /* Subtle highlight on hover */
+}
+
+#eventTable td {
+    color: var(--color-text-light);
+}
+
+#eventTable td ul {
+    list-style: none; /* Remove bullet points */
+    padding: 0;
+    margin: 0;
+}
+
+#eventTable .edit-btn,
+#eventTable .delete-btn {
+    padding: 8px 12px;
+    font-size: 0.85rem;
+    margin-right: 5px;
+    box-shadow: none; /* Remove glow for smaller table buttons */
+    background: var(--color-accent-blue); /* Default edit button color */
+    color: white;
+}
+
+#eventTable .delete-btn {
+    background-color: var(--color-error); /* Red for delete */
+    background-image: none; /* Override gradient */
+}
+
+#eventTable .edit-btn:hover {
+    background: var(--color-accent-purple);
+}
+#eventTable .delete-btn:hover {
+    background-color: #cc0000; /* Darker red on hover */
+}
+
+
+/* Footer */
+footer {
+    text-align: center;
+    padding: 20px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    header, main, footer, .video-info, .video-loader-form input[type="text"] {
+        width: calc(100% - 40px); /* More padding on smaller screens */
+        margin: 15px auto;
+    }
+
+    header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    header h1 {
+        text-align: center;
+        width: 100%;
+        margin-bottom: 15px;
+    }
+
+    header .video-loader-form {
+        width: 100%;
+        margin-top: 0;
+    }
+
+    .video-controls {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .video-controls button {
+        width: 100%;
+        margin: 8px 0;
+    }
 }

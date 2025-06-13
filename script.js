@@ -4,9 +4,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const uploadTejButton = document.getElementById('uploadTejButton'); console.log('uploadTejButton:', uploadTejButton);
     const uploadTejFile = document.getElementById('uploadTejFile'); console.log('uploadTejFile:', uploadTejFile);
 
-    // NEW DOM elements for URL loading
     const videoUrlInput = document.getElementById('videoUrlInput'); console.log('videoUrlInput:', videoUrlInput);
     const loadVideoUrlButton = document.getElementById('loadVideoUrlButton'); console.log('loadVideoUrlButton:', loadVideoUrlButton);
+
+    // NEW Fullscreen Button reference
+    const fullscreenButton = document.getElementById('fullscreenButton'); console.log('fullscreenButton:', fullscreenButton);
 
     const freezeFromTimeButton = document.getElementById('freezeFromTime'); console.log('freezeFromTimeButton:', freezeFromTimeButton);
     const freezeToTimeButton = document.getElementById('freezeToTime'); console.log('freezeToTimeButton:', freezeToTimeButton);
@@ -433,6 +435,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
     videoPlayer.addEventListener('timeupdate', updateCurrentTimeDisplays);
 
+    // NEW Fullscreen Toggle Event Listener
+    fullscreenButton.addEventListener('click', () => {
+        if (!primaryVideoSource) {
+            alert("Please load a video first to go fullscreen.");
+            return;
+        }
+
+        if (document.fullscreenElement) {
+            // If already in fullscreen, exit
+            document.exitFullscreen();
+        } else {
+            // If not in fullscreen, request fullscreen for the video player
+            if (videoPlayer.requestFullscreen) {
+                videoPlayer.requestFullscreen();
+            } else if (videoPlayer.mozRequestFullScreen) { // Firefox
+                videoPlayer.mozRequestFullScreen();
+            } else if (videoPlayer.webkitRequestFullscreen) { // Chrome, Safari and Opera
+                videoPlayer.webkitRequestFullscreen();
+            } else if (videoPlayer.msRequestFullscreen) { // IE/Edge
+                videoPlayer.msRequestFullscreen();
+            }
+        }
+    });
+
+
     freezeFromTimeButton.addEventListener('click', () => {
         if (!primaryVideoSource) {
             alert("Please load a video first to freeze time.");
@@ -555,6 +582,26 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // --- .tej Binary Export Logic ---
+    // TextEncoder instance for UTF-8 encoding
+    const encoder = new TextEncoder();
+
+    // Helper to convert number to 4-byte Uint32 ArrayBuffer
+    const toUint32Buffer = (num) => {
+        const arr = new Uint32Array(1);
+        arr[0] = num;
+        return arr.buffer;
+    };
+
+    // Helper to convert string to length-prefixed Uint8Array (string length + string bytes)
+    const toLengthPrefixedUTF8 = (str) => {
+        // Trim whitespace to ensure accurate length calculation for strings
+        const trimmedStr = String(str).trim(); // Ensure it's a string and trim
+        const encoded = encoder.encode(trimmedStr);
+        // Using Uint32 for length to match format (4 bytes for length)
+        const lengthBuffer = toUint32Buffer(encoded.length);
+        return new Uint8Array([...new Uint8Array(lengthBuffer), ...encoded]);
+    };
+
     exportTejButton.addEventListener('click', async () => {
         if (!primaryVideoSource) {
             alert("Please load a primary video source first before exporting.");
@@ -567,22 +614,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         console.log("Starting .tej export...");
 
-        const encoder = new TextEncoder(); // For converting strings to Uint8Array
-
-        // Helper to convert number to 4-byte Uint32 ArrayBuffer
-        const toUint32Buffer = (num) => {
-            const arr = new Uint32Array(1);
-            arr[0] = num;
-            return arr.buffer;
-        };
-
-        // Helper to convert string to length-prefixed Uint8Array
-        const toLengthPrefixedUTF8 = (str) => {
-            const encoded = encoder.encode(str);
-            const lengthBuffer = toUint32Buffer(encoded.length); // 4-byte length prefix
-            return new Uint8Array([...new Uint8Array(lengthBuffer), ...encoded]);
-        };
-
         const chunks = []; // Array to hold all binary chunks (each element is Uint8Array)
 
         // --- 1. TEJ_HEADER Chunk ---
@@ -590,23 +621,24 @@ document.addEventListener('DOMContentLoaded', () => {
         const headerAttributes = {
             version: "1.0",
             total_duration: videoPlayer.duration ? Math.floor(videoPlayer.duration * 1000) : 0,
-            // Use primaryVideoFileName, which is derived from the URL's last segment.
-            // This is the "relative path URL" as requested.
-            primary_video_source: primaryVideoFileName || "linked_video_placeholder"
+            primary_video_source: primaryVideoFileName || "linked_video_placeholder" // Use primaryVideoFileName (relative path)
         };
 
         const headerAttributeBuffers = [];
         for (const [key, val] of Object.entries(headerAttributes)) {
-            const keyBuffer = toLengthPrefixedUTF8(key);
+            // Key is length-prefixed string
+            const keyBuffer = toLengthPrefixedUTF8(key.trim());
             headerAttributeBuffers.push(keyBuffer);
 
             if (typeof val === 'string') {
-                const valBuffer = toLengthPrefixedUTF8(val); // Value is length-prefixed string
+                // Value is length-prefixed string
+                const valBuffer = toLengthPrefixedUTF8(val.trim());
                 headerAttributeBuffers.push(valBuffer);
             } else if (typeof val === 'number') {
-                const numberBuffer = new Float32Array([val]).buffer; // 4-byte float
-                const lengthBuffer = toUint32Buffer(numberBuffer.byteLength); // Length of the number buffer (4 bytes)
-                headerAttributeBuffers.push(new Uint8Array(lengthBuffer), new Uint8Array(numberBuffer));
+                const numberBuffer = new Float32Array([val]).buffer; // 4-byte float data
+                const lengthBuffer = toUint32Buffer(numberBuffer.byteLength); // 4-byte length (always 4 for float32)
+                // Combine length and data into a single Uint8Array for the value
+                headerAttributeBuffers.push(new Uint8Array([...new Uint8Array(lengthBuffer), ...new Uint8Array(numberBuffer)]));
             }
         }
 
@@ -629,9 +661,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         for (const channelId in eventsByChannel) {
             const channelEvents = eventsByChannel[channelId];
-            const channelConfig = channelsConfig.find(c => c.id === channelId);
+            const channelConfig = channelsConfig.find(c => c.id === channelId.trim()); // Ensure trimmed ID
             if (!channelConfig) {
-                console.warn(`Channel config not found for ID: ${channelId}. Skipping.`);
+                console.warn(`Channel config not found for ID: ${channelId}. Skipping this channel's events.`);
                 continue;
             }
 
@@ -641,46 +673,53 @@ document.addEventListener('DOMContentLoaded', () => {
                 // --- EVENT Chunk (e.g., SMELL, TEMPERATURE) ---
                 const eventAttributeBuffers = [];
 
-                // Standard attributes (timefrom, timeto)
+                // Standard attributes (timefrom, timeto) - handled as Uint32 numbers
                 eventAttributeBuffers.push(toLengthPrefixedUTF8("timefrom"));
-                const fromTimeBuffer = toUint32Buffer(event.from);
-                eventAttributeBuffers.push(new Uint8Array(toUint32Buffer(fromTimeBuffer.byteLength)), new Uint8Array(fromTimeBuffer));
+                const fromTimeNumBuffer = toUint32Buffer(event.from);
+                eventAttributeBuffers.push(new Uint8Array([...new Uint8Array(toUint32Buffer(fromTimeNumBuffer.byteLength)), ...new Uint8Array(fromTimeNumBuffer)]));
 
                 eventAttributeBuffers.push(toLengthPrefixedUTF8("timeto"));
-                const toTimeBuffer = toUint32Buffer(event.to);
-                eventAttributeBuffers.push(new Uint8Array(toUint32Buffer(toTimeBuffer.byteLength)), new Uint8Array(toTimeBuffer));
+                const toTimeNumBuffer = toUint32Buffer(event.to);
+                eventAttributeBuffers.push(new Uint8Array([...new Uint8Array(toUint32Buffer(toTimeNumBuffer.byteLength)), ...new Uint8Array(toTimeNumBuffer)]));
 
                 // Dynamic attributes from channel.json
                 for (const attrName in event.attributes) {
                     const attrValue = event.attributes[attrName];
-                    eventAttributeBuffers.push(toLengthPrefixedUTF8(attrName)); // Attribute Key
+                    // Ensure attrName is trimmed
+                    eventAttributeBuffers.push(toLengthPrefixedUTF8(attrName.trim())); // Attribute Key
 
                     if (typeof attrValue === 'string') {
-                        eventAttributeBuffers.push(toLengthPrefixedUTF8(attrValue)); // Value is length-prefixed string
+                        // Ensure attrValue is trimmed
+                        eventAttributeBuffers.push(toLengthPrefixedUTF8(attrValue.trim())); // Value is length-prefixed string
                     } else if (typeof attrValue === 'number') {
-                        const numberBuffer = new Float32Array([attrValue]).buffer; // 4-byte float
-                        const lengthBuffer = toUint32Buffer(numberBuffer.byteLength);
-                        eventAttributeBuffers.push(new Uint8Array(lengthBuffer), new Uint8Array(numberBuffer));
+                        const numberBuffer = new Float32Array([attrValue]).buffer; // 4-byte float for attributes
+                        const lengthBuffer = toUint32Buffer(numberBuffer.byteLength); // Length of the number buffer (4 bytes)
+                        // Push a single Uint8Array for number value
+                        eventAttributeBuffers.push(new Uint8Array([...new Uint8Array(lengthBuffer), ...new Uint8Array(numberBuffer)]));
                     }
-                    // TODO: Handle boolean, and other potential types if needed
+                    // TODO: Handle boolean, and other potential types if needed (e.g., if channels.json defines 'boolean')
                 }
 
+                // Concatenate all attribute buffers for this event into a single Uint8Array
                 const eventValue = new Uint8Array(eventAttributeBuffers.flatMap(arr => Array.from(arr)));
-                const eventType = encoder.encode(channelConfig.id.substring(0, 4).toUpperCase()); // e.g., "SMEL", "PLEA" - 4-char ID
-                const eventLength = new Uint8Array(toUint32Buffer(eventValue.length));
+                // Use the first 4 characters of the channelId for the event type (e.g., "smell" -> "SMEL")
+                const eventType = encoder.encode(channelConfig.id.substring(0, 4).toUpperCase());
+                const eventLength = new Uint8Array(toUint32Buffer(eventValue.length)); // 4-byte length of eventValue
                 channelEventsBuffer.push(eventType, eventLength, eventValue);
             }
 
             // --- CHANNEL Chunk ---
-            const channelHeader = toLengthPrefixedUTF8(channelConfig.id); // Storing the channel ID as its name
-            const channelValue = new Uint8Array([...Array.from(channelHeader), ...channelEventsBuffer.flatMap(arr => Array.from(arr))]);
+            // The channel's own name is the first part of its value
+            const channelNameBuffer = toLengthPrefixedUTF8(channelConfig.id.trim()); // Storing the channel ID as its name (length-prefixed string)
+            // Concatenate channel name and all its events into the channelValue
+            const channelValue = new Uint8Array([...Array.from(channelNameBuffer), ...channelEventsBuffer.flatMap(arr => Array.from(arr))]);
 
             const channelType = encoder.encode("CHAN"); // Fixed 4-byte string for channel type
             const channelLength = new Uint8Array(toUint32Buffer(channelValue.length));
             chunks.push(channelType, channelLength, channelValue);
         }
 
-        // Concatenate all chunks into a single ArrayBuffer
+        // Concatenate all main chunks into a single ArrayBuffer for the final .tej file
         const finalBuffer = new Uint8Array(chunks.flatMap(arr => Array.from(arr)));
         const blob = new Blob([finalBuffer], { type: 'application/octet-stream' });
         const url = URL.createObjectURL(blob);
